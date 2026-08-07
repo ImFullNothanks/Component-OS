@@ -41,8 +41,8 @@ void display_set_fb(void) {
 
 // --- unified API ---
 void display_clear(void)             { backend.clear(); }
-void display_printchar(char c)         { backend.putchar(c); }
-void display_printstr(const char *s)     { backend.puts(s); }
+void display_printchar(char c)         { backend.printchar(c); }
+void display_printstr(const char *s)     { backend.printstr(s); }
 void display_set_color(uint32_t fg, uint32_t bg) { backend.set_color(fg, bg); }
 void display_printhex(uint32_t val) {
     char hex[] = "0x00000000";
