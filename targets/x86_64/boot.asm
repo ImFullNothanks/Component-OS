@@ -1,5 +1,9 @@
+section .data
+mb2_info:  dd 0
+
 section .text
 global start
+global mb2_info
 extern long_mode_start
 bits 32
 

@@ -20,11 +20,11 @@ os_objects   := $(asm_objects) $(c_objects)
 
 build/%.asm.o: src/%.asm
 	mkdir -p $(dir $@)
-	$(NASM) -f elf64 $< -o $@
+	$(NASM) $(ASMFLAGS) $< -o $@
 
 build/%.asm.o: $(TARGET_DIR)/%.asm
 	mkdir -p $(dir $@)
-	$(NASM) -f elf64 $< -o $@
+	$(NASM) $(ASMFLAGS) $< -o $@
 
 build/%.c.o: $(TARGET_DIR)/%.c
 	mkdir -p $(dir $@)
