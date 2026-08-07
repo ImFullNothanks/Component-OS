@@ -1,31 +1,34 @@
 ENTRY(start)
 
-SECTIONS
-{
-	. = 1M;
+SECTIONS {
+    . = 1M;
 
-	.boot : /* Multiboot2 header */
-	{
-		KEEP(*(.multiboot_header))
-	}
+    .boot : { KEEP(*(.multiboot_header)) }
 
-	.text : /* Code Segment (CS) */
-	{
-		*(.text)
-	}
+    .text : {
+        _text_start = .;
+        *(.text)
+        _text_end = .;
+    }
 
-	.data : /* Data Segment (DS) */
-	{
-		*(.data)
-	}
+    .rodata : {
+        _rodata_start = .;
+        *(.rodata)
+        _rodata_end = .;
+    }
 
-	.bss : /* Data Segment (DS) */
-	{
-		*(.bss)
-	}
+    .data : {
+        _data_start = .;
+        *(.data)
+        _data_end = .;
+    }
 
-	.rodata : /* Read-Only Data */
-	{
-		*(.rodata)
-	}
+    .bss : {
+        _bss_start = .;
+        *(COMMON)
+        *(.bss)
+        _bss_end = .;
+    }
+
+    _kernel_end = .;
 }

@@ -4,14 +4,11 @@
 #include <stdint.h>
 
 // section symbols from linker script
-extern uint64_t _text_start,   _text_end;
-extern uint64_t _rodata_start, _rodata_end;
-extern uint64_t _data_start,   _data_end;
-extern uint64_t _bss_start,    _bss_end;
-extern uint64_t _kernel_end;
-#define KERNEL_PHYS_BASE 0x100000ULL
-#define KERNEL_VIRT_BASE 0xFFFFFFFF80100000ULL
-#define VIRT_TO_PHYS(v)  ((v) - KERNEL_VIRT_BASE + KERNEL_PHYS_BASE)
+extern uint8_t _text_start,   _text_end;
+extern uint8_t _rodata_start, _rodata_end;
+extern uint8_t _data_start,   _data_end;
+extern uint8_t _bss_start,    _bss_end;
+extern uint8_t _kernel_end;
 
 #define PML4_IDX(va) (((va) >> 39) & 0x1FF)
 #define PDPT_IDX(va) (((va) >> 30) & 0x1FF)
@@ -50,10 +47,6 @@ static void map_range(uint64_t *pml4, uint64_t va_start, uint64_t va_end,
 
 void paging_remap(void) {
     uint64_t *new_pml4 = (uint64_t *)pmm_alloc();
-
-    // keep low identity map for devices (VGA, BIOS, MMIO)
-    map_range(new_pml4, 0, 0x100000000ULL, 0,
-              PAGE_PRESENT | PAGE_WRITE | PAGE_NX);
 
     uint64_t text_start   = (uint64_t)(uintptr_t)&_text_start;
     uint64_t text_end     = (uint64_t)(uintptr_t)&_text_end;

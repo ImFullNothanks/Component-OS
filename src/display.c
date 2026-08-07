@@ -25,19 +25,17 @@ static void fb_setcolor_wrap(uint32_t fg, uint32_t bg) {
 }
 
 // --- public init ---
-void display_init_vga(void) {
+void display_set_vga(void) {
     backend.clear     = vga_clear_wrap;
-    backend.putchar   = vga_putchar_wrap;
-    backend.puts      = vga_puts_wrap;
+    backend.printchar   = vga_putchar_wrap;
+    backend.printstr      = vga_puts_wrap;
     backend.set_color = vga_setcolor_wrap;
 }
 
-void display_init_fb(uint64_t addr, uint32_t w, uint32_t h,
-                     uint32_t pitch, uint8_t bpp) {
-    fb_init(addr, w, h, pitch, bpp);
+void display_set_fb(void) {
     backend.clear     = fb_clear_wrap;
-    backend.putchar   = fb_putchar_wrap;
-    backend.puts      = fb_puts_wrap;
+    backend.printchar   = fb_putchar_wrap;
+    backend.printstr      = fb_puts_wrap;
     backend.set_color = fb_setcolor_wrap;
 }
 
