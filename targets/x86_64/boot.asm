@@ -96,7 +96,7 @@ setup_page_tables:
     mul ecx
     add eax, 0x40000000
     or eax, 0b10000011
-    mov [PHYS(page_table_l2_hi) + ecx * 8], eax
+    mov [page_table_l2_hi + ecx * 8], eax
     inc ecx
     cmp ecx, 512
     jne .loop2
@@ -108,7 +108,7 @@ setup_page_tables:
     mul ecx
     add eax, 0x80000000
     or eax, 0b10000011
-    mov [PHYS(page_table_l2_hi2) + ecx * 8], eax
+    mov [page_table_l2_hi2 + ecx * 8], eax
     inc ecx
     cmp ecx, 512
     jne .loop3
@@ -121,7 +121,7 @@ setup_page_tables:
     mul ecx
     add eax, 0xC0000000
     or eax, 0b10000011
-    mov [PHYS(page_table_l2_hi3) + ecx * 8], eax
+    mov [page_table_l2_hi3 + ecx * 8], eax
     inc ecx
     cmp ecx, 512
     jne .loop4

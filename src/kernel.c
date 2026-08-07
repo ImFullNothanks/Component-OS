@@ -7,6 +7,7 @@
 #include "smbios.h"
 #include "krnlshell.h"
 #include "multiboot2.h"
+#include "fb.h"
 
 extern uint32_t mb2_info;
 extern void cli(void);
