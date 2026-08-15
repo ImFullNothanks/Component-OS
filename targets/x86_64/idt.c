@@ -1,7 +1,7 @@
 #include "idt.h"
 #include "io.h"
+#include "display.h"
 #include "pic.h"
-#include "print.h"
 #include "kbd.h"
 
 #define IDT_ENTRIES 256
@@ -12,14 +12,13 @@ static idt_ptr_t idt_ptr;
 
 static void idt_set(int n, uint64_t handler) {
     idt[n].offset_low  = handler & 0xFFFF;
-    idt[n].selector    = 0x08; 
-    idt[n].ist         = 0;   
+    idt[n].selector    = 0x08;
+    idt[n].ist         = 0;
     idt[n].irq_attr    = IDT_TYPE_INTERRUPT;
     idt[n].offset_mid  = (handler >> 16) & 0xFFFF;
     idt[n].offset_high = (handler >> 32) & 0xFFFFFFFF;
     idt[n].zero        = 0;
 }
-
 
 // CPU exception handlers (0-31)
 extern void isr0(void);   // Divide by zero (#DE)
@@ -32,7 +31,6 @@ extern void irq0(void); // Timer
 extern void irq1(void); // Keyboard
 
 void idt_init(void) {
-    // set all entries to a default first
     extern void isr_default(void);
     extern void lidt(idt_ptr_t* ptr);
     for (int i = 0; i < IDT_ENTRIES; i++) {
@@ -55,12 +53,23 @@ void idt_init(void) {
     lidt(&idt_ptr);
 }
 
+// Pure CPU exceptions use this handler (NO PIC EOI!)
 void isr_default_handler(void) {
+    // Hang or print exception info here later instead of touching PIC
+    display_set_color(display_find_rgb_color(255, 0, 0), 0x000000);
+    display_printstr("Exception Happened. Halting.");
+    display_set_color(0xFFFFFF, 0x000000);
+    for(;;);
+}
+
+// Timer IRQ handler (IRQ 0)
+void irq0_handler(void) {
     pic_eoi(0);
 }
 
+// Keyboard IRQ handler (IRQ 1)
 void irq1_handler(void) {
     uint8_t scancode = inb(0x60);
-    pic_eoi(1);
     kbd_handler(scancode);
+    pic_eoi(1); // Send EOI after handling the scancode
 }

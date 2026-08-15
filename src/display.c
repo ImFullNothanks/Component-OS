@@ -44,6 +44,7 @@ void display_clear(void)             { backend.clear(); }
 void display_printchar(char c)         { backend.printchar(c); }
 void display_printstr(const char *s)     { backend.printstr(s); }
 void display_set_color(uint32_t fg, uint32_t bg) { backend.set_color(fg, bg); }
+uint32_t display_find_rgb_color(uint8_t r, uint8_t g, uint8_t b) { return ((uint32_t)r << 16) | ((uint32_t)g << 8) | b; }
 void display_printhex(uint32_t val) {
     char hex[] = "0x00000000";
     char digits[] = "0123456789ABCDEF";

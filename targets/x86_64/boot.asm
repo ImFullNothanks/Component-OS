@@ -40,7 +40,7 @@ check_cpuid:
     pop eax
     push ecx
     popfd
-    cmp eax,ecx
+    cmp eax, ecx
     je .no_cpuid
     ret
 .no_cpuid:
@@ -95,6 +95,9 @@ setup_page_tables:
 	inc ecx ; increment counter
 	cmp ecx, 512 ; checks if the whole table is mapped
 	jne .loop ; if not, continue
+
+	; fill second PD — maps 0x40000000 to 0x80000000
+    mov ecx, 0
 .loop2:
     mov eax, 0x200000
     mul ecx

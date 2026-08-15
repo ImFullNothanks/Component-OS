@@ -38,7 +38,7 @@ void kernel_start() {
     display_printstr("Interrupts Cleared.\n");
     display_printstr("Scanning PCI Bus.\n");
     pci_enumerate();
-    find_smbios();
+    //find_smbios();
     cmd_init();
     for(;;) __asm__ volatile ("hlt");  // sleep until next interrupt
 }

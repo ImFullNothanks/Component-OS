@@ -3,7 +3,7 @@
 #include "display.h"
 
 uint32_t pci_read(uint8_t bus, uint8_t dev, uint8_t func, uint8_t offset) {
-    uint64_t addr = (1 << 31)           // enable bit
+    uint32_t addr = (1 << 31)           // enable bit
                   | ((uint32_t)bus  << 16)
                   | ((uint32_t)dev  << 11)
                   | ((uint32_t)func << 8)
@@ -33,7 +33,7 @@ static uint8_t pci_header_type(uint8_t bus, uint8_t dev, uint8_t func) {
 }
 
 void pci_enumerate(void) {
-    for (uint16_t bus = 0; bus < 255; bus++) {
+    for (uint16_t bus = 0; bus < 256; bus++) {
         for (uint8_t dev = 0; dev < 32; dev++) {
             // check function 0 first
             if (pci_vendor(bus, dev, 0) == 0xFFFF)

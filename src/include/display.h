@@ -17,4 +17,5 @@ void display_clear(void);
 void display_printchar(char c);
 void display_printstr(const char *s);
 void display_set_color(uint32_t fg, uint32_t bg);
+uint32_t display_find_rgb_color(uint8_t r, uint8_t g, uint8_t b);
 void display_printhex(uint32_t val);

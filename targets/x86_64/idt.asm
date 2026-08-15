@@ -11,6 +11,7 @@ global irq0
 global irq1
 
 extern isr_default_handler
+extern irq0_handler
 extern irq1_handler
 
 cli:
@@ -112,7 +113,7 @@ isr14:
     isr_stub_err isr_default_handler
 
 irq0:
-    isr_stub isr_default_handler
+    isr_stub irq0_handler
 
 irq1:
     isr_stub irq1_handler
