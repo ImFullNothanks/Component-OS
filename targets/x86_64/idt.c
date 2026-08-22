@@ -3,6 +3,7 @@
 #include "display.h"
 #include "pic.h"
 #include "kbd.h"
+#include "pit.h"
 
 #define IDT_ENTRIES 256
 #define IDT_TYPE_INTERRUPT 0x8E // Present bit + ring0 + interrupt gate
@@ -64,6 +65,7 @@ void isr_default_handler(void) {
 
 // Timer IRQ handler (IRQ 0)
 void irq0_handler(void) {
+    pit_handler();
     pic_eoi(0);
 }
 

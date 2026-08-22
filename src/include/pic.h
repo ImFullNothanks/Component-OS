@@ -8,6 +8,7 @@
 
 #define PIC_EOI         0x20  // end of interrupt
 
+void io_wait(void);
 void pic_remap(void);
 void pic_eoi(uint8_t irq);
 void pic_mask(uint8_t irq);

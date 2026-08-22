@@ -21,6 +21,8 @@ void clear_row(size_t row) {
 }
 
 void print_clear() {
+    col = 0;
+    row = 0;
     for (size_t i = 0; i < VGA_ROWS; i++) {
         clear_row(i);
     }

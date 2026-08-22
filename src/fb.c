@@ -102,6 +102,8 @@ void fb_putpixel(uint32_t x, uint32_t y, uint32_t color) {
 }
 
 void fb_clear(uint32_t color) {
+    fb_cursor_x = 0;
+    fb_cursor_y = 0;
     for (uint32_t y = 0; y < fb_height; y++)
         for (uint32_t x = 0; x < fb_width; x++)
             fb_putpixel(x, y, color);

@@ -1,6 +1,7 @@
 #include "krnlshell.h"
 #include "display.h"
 #include "pci.h"
+#include "pit.h"
 #include "smbios.h"
 #include "string.h"  // we'll need this too
 
@@ -21,7 +22,15 @@ static void cmd_run(char *cmd) {
         pci_enumerate();
     } else if (strcmp(cmd, "smbiosinfo") == 0 ) {
         smbios_info();
-    }  else {
+    } else if (strcmp(cmd, "uptime") == 0 ) {
+        uint32_t uptime = pit_kernel_uptime_seconds();
+        char uptime_str[32];
+        itoa(uptime, uptime_str, 10);
+
+        display_printstr("Uptime: ");
+        display_printstr(uptime_str);
+        display_printstr(" seconds\n");
+    } else {
         display_printstr("unknown command: ");
         display_printstr(cmd);
         display_printchar('\n');

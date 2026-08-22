@@ -2,7 +2,7 @@
 #include "io.h"
 
 // small delay needed between PIC commands on real hardware
-static void io_wait(void) {
+void io_wait(void) {
     outb(0x80, 0);  // write to unused port
 }
 
