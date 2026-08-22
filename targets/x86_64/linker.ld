@@ -5,25 +5,25 @@ SECTIONS {
 
     .boot : { KEEP(*(.multiboot_header)) }
 
-    .text : {
+    .text : ALIGN(0x1000) {
         _text_start = .;
         *(.text)
         _text_end = .;
     }
 
-    .rodata : {
+    .rodata : ALIGN(0x1000) {
         _rodata_start = .;
         *(.rodata)
         _rodata_end = .;
     }
 
-    .data : {
+    .data : ALIGN(0x1000) {
         _data_start = .;
         *(.data)
         _data_end = .;
     }
 
-    .bss : {
+    .bss : ALIGN(0x1000) {
         _bss_start = .;
         *(COMMON)
         *(.bss)
