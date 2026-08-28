@@ -1,6 +1,9 @@
 #pragma once
 #include <stdint.h>
 #include "string.h"
+#include "io.h"
+#include "display.h"
+#include "multiboot2.h"
 
 struct __attribute__((packed)) rsdp_descriptor {
     char signature[8];       // "RSD PTR "
@@ -41,5 +44,5 @@ struct __attribute__((packed)) fadt {
     // ... (other fields continue down the table)
 };
 
-void acpi_init(void);
+void acpi_init(uint32_t mb2_info);
 void acpi_shutdown(void);

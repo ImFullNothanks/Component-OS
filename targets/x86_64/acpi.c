@@ -1,34 +1,44 @@
 #include "acpi.h"
 #include "string.h"
+#include "io.h"
+#include "display.h"
+#include "multiboot2.h"
 #include <stdint.h>
 
-struct rsdp_descriptor* find_rsdp(void) {
-    for (uintptr_t addr = 0xE0000; addr <= 0xFFFFF; addr += 16) {
-        struct rsdp_descriptor *rsdp = (struct rsdp_descriptor *)addr;
+uint16_t pm1a_cnt_port;
+uint16_t slp_typ_a = 0x2000;
 
-        // Use strncmp to check the 8-byte signature cleanly
-        if (strncmp(rsdp->signature, "RSD PTR ", 8) == 0) {
-
-            // Verify the checksum for ACPI version 1.0 (first 20 bytes)
-            uint8_t sum = 0;
-            uint8_t *byte_ptr = (uint8_t *)rsdp;
-            for (int i = 0; i < 20; i++) {
-                sum += byte_ptr[i];
-            }
-
-            if (sum == 0) {
-                return rsdp; // Valid RSDP found!
-            }
-        }
+struct rsdp_descriptor* find_rsdp(uint32_t mb2_info) {
+    // Try to find ACPI v2 (tag type 15) first
+    struct mb2_tag *acpi_tag = mb2_get_tag(mb2_info, 15);
+    if (!acpi_tag) {
+        // Fallback to ACPI v1 (tag type 14 / 0xE)
+        acpi_tag = mb2_get_tag(mb2_info, 14);
     }
 
-    return 0; // Not found
+    if (!acpi_tag) {
+        return 0; // Neither tag was provided by GRUB
+    }
+
+    return (struct rsdp_descriptor *)((uint8_t *)acpi_tag + 8);
 }
 
 // Generic function to find a specific ACPI table by its 4-character signature (e.g., "FACP")
 void* find_acpi_table(struct rsdp_descriptor *rsdp, const char *signature) {
+    if (rsdp->rsdt_address == 0) {
+        display_printstr("ACPI Error: RSDT address is zero!\n");
+        return 0;
+    }
+    display_printstr("ACPI: Found RSDT Table At:");
+    display_printhex(rsdp->rsdt_address);
+    display_printchar('\n');
     // 1. Get the RSDT physical address from the RSDP
     struct rsdt *rsdt = (struct rsdt *)(uintptr_t)rsdp->rsdt_address;
+
+    if (memcmp(rsdt->header.signature, "RSDT", 4) != 0) {
+        display_printstr("ACPI Error: RSDT signature mismatch!\n");
+        return 0;
+    }
 
     // 2. Calculate how many table pointers are inside the RSDT
     // Total table length minus the header size gives us the size of the array of pointers,
@@ -40,7 +50,7 @@ void* find_acpi_table(struct rsdp_descriptor *rsdp, const char *signature) {
         struct acpi_header *table = (struct acpi_header *)(uintptr_t)rsdt->pointer_to_other_tables[i];
 
         // Check if this table's signature matches what we're looking for (e.g., "FACP")
-        if (strncmp(table->signature, signature, 4) == 0) {
+        if (table != 0 && memcmp(table->signature, signature, 4) == 0) {
             return table; // Found it!
         }
     }
@@ -48,22 +58,11 @@ void* find_acpi_table(struct rsdp_descriptor *rsdp, const char *signature) {
     return 0; // Table not found
 }
 
-void* table = find_acpi_table(rsdp, "FACP");
-if (table != 0) {
-    struct fadt *fadt = (struct fadt *)table;
-
-    // Extract the 16-bit I/O port address for PM1a Control Block
-    uint16_t pm1a_cnt = (uint16_t)fadt->pm1a_cnt_blk;
-
-    // (Optional) If pm1b_cnt_blk is also present, you might use it too,
-    // but pm1a is usually enough for basic shutdown.
-}
-
-void acpi_init(void) {
+void acpi_init(uint32_t mb2_info) {
     display_printstr("Initializing ACPI...\n");
 
     // Step 1: Hunt for the RSDP structure in the BIOS area
-    struct rsdp_descriptor *rsdp = find_rsdp();
+    struct rsdp_descriptor *rsdp = find_rsdp(mb2_info);
     if (!rsdp) {
         display_printstr("ACPI Error: RSDP not found!\n");
         return;
