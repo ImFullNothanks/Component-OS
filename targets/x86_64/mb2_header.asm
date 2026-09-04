@@ -10,7 +10,7 @@ header_start:
     align 8
     ;framebuffer tag
     dw 5    ; type = framebuffer
-    dw 1    ; flags
+    dw 1    ; flags (can be non-optional or optional; 1 for optional)
     dd 20   ; size
     dd 0    ; width 0 = Up For Grub to decide
     dd 0    ; height 0 also means Up For Grub to decide
@@ -18,13 +18,13 @@ header_start:
 
     align 8
     ; Request ACPI information tag from GRUB
-    dw 15                        ; Type: Multiboot header tag for ACPI (v1 or v2)
+    dw 15                        ; Type: Multiboot header tag for ACPI (v2)
     dw 1                        ; Flags (can be non-optional or optional; 1 for optional)
     dd 8                        ; Size of this tag (including type and flags)
 
     align 8
     ; Request ACPI information tag from GRUB
-    dw 14                        ; Type: Multiboot header tag for ACPI (v1 or v2)
+    dw 14                        ; Type: Multiboot header tag for ACPI (v1)
     dw 1                        ; Flags (can be non-optional or optional; 1 for optional)
     dd 8                        ; Size of this tag (including type and flags)
 

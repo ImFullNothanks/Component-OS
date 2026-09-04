@@ -10,10 +10,10 @@ uint16_t slp_typ_a = 0x2000;
 
 struct rsdp_descriptor* find_rsdp(uint32_t mb2_info) {
     // Try to find ACPI v2 (tag type 15) first
-    struct mb2_tag *acpi_tag = mb2_get_tag(mb2_info, 15);
+    struct mb2_tag *acpi_tag = (struct mb2_tag *)mb2_get_tag(mb2_info, 15);
     if (!acpi_tag) {
         // Fallback to ACPI v1 (tag type 14 / 0xE)
-        acpi_tag = mb2_get_tag(mb2_info, 14);
+        acpi_tag = (struct mb2_tag *)mb2_get_tag(mb2_info, 14);
     }
 
     if (!acpi_tag) {
