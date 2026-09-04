@@ -2,6 +2,7 @@
 #include "io.h"
 #include "display.h"
 #include "pic.h"
+#include "krnlerr.h"
 #include "kbd.h"
 #include "pit.h"
 
@@ -61,6 +62,21 @@ void isr_default_handler(void) {
     display_printstr("Exception Happened. Halting.");
     display_set_color(0xFFFFFF, 0x000000);
     for(;;);
+}
+
+void cpu_fault_isr_handler(struct cpu_state *state) {
+    const char *fault_name = "UNKNOWN CPU EXCEPTION";
+
+    switch (state->irq_no) {
+        case 0:  fault_name = "DIVISION BY ZERO (#DE)"; break;
+        case 6:  fault_name = "INVALID OPCODE (#UD)"; break;
+        case 8:  fault_name = "DOUBLE FAULT (#DF)"; break;
+        case 13: fault_name = "GENERAL PROTECTION FAULT (#GP)"; break;
+        case 14: fault_name = "PAGE FAULT (#PF)"; break;
+        default: fault_name = "CPU EXCEPTION"; break;
+    }
+
+    kernel_panic(fault_name, state);
 }
 
 // Timer IRQ handler (IRQ 0)

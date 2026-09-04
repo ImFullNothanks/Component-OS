@@ -13,7 +13,7 @@ static uint64_t  buf_len = 0;
 
 static void cmd_run(char *cmd) {
     if (strcmp(cmd, "help") == 0) {
-        display_printstr("commands: help, clear, echo, uptime, reboot, poweroff, pcilist, smbiosinfo\n");
+        display_printstr("commands: help, clear, echo, uptime, reboot, poweroff, pcilist, breakpoint, smbiosinfo\n");
     } else if (strncmp(cmd, "echo ", 5) == 0) {
         display_printstr(cmd + 5);
         display_printchar('\n');
@@ -35,6 +35,8 @@ static void cmd_run(char *cmd) {
         system_reboot();
     } else if (strcmp(cmd, "poweroff") == 0 ) {
         system_shutdown();
+    } else if (strcmp(cmd, "breakpoint") == 0 ) {
+        asm volatile ("int3");
     } else {
         display_printstr("unknown command: ");
         display_printstr(cmd);
