@@ -32,6 +32,9 @@ void* find_acpi_table(struct rsdp_descriptor *rsdp, const char *signature) {
     display_printstr("ACPI: Found RSDT Table At:");
     display_printhex(rsdp->rsdt_address);
     display_printchar('\n');
+    if (rsdp->rsdt_address > 0xF0000000) {
+        return 0;
+    }
     // 1. Get the RSDT physical address from the RSDP
     struct rsdt *rsdt = (struct rsdt *)(uintptr_t)rsdp->rsdt_address;
 
