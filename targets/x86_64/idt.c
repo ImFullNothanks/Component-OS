@@ -24,6 +24,7 @@ static void idt_set(int n, uint64_t handler) {
 
 // CPU exception handlers (0-31)
 extern void isr0(void);   // Divide by zero (#DE)
+extern void isr3(void);   // Breakpoint (#BP)
 extern void isr8(void);   // Double fault (#DF)
 extern void isr13(void);  // General protection fault (#GP)
 extern void isr14(void);  // Page fault (#PF)
@@ -41,6 +42,7 @@ void idt_init(void) {
 
     // CPU exceptions
     idt_set(0, (uint64_t)isr0);
+    idt_set(3, (uint64_t)isr3);
     idt_set(8, (uint64_t)isr8);
     idt_set(13, (uint64_t)isr13);
     idt_set(14, (uint64_t)isr14);
@@ -69,6 +71,7 @@ void cpu_fault_isr_handler(struct cpu_state *state) {
 
     switch (state->irq_no) {
         case 0:  fault_name = "DIVISION BY ZERO (#DE)"; break;
+        case 3:  fault_name = "Breakpoint Reached (#BP)"; break;
         case 6:  fault_name = "INVALID OPCODE (#UD)"; break;
         case 8:  fault_name = "DOUBLE FAULT (#DF)"; break;
         case 13: fault_name = "GENERAL PROTECTION FAULT (#GP)"; break;
