@@ -1,6 +1,7 @@
 #include "acpi.h"
 #include "string.h"
 #include "io.h"
+#include "paging.h"
 #include "display.h"
 #include "multiboot2.h"
 #include <stdint.h>
@@ -29,32 +30,45 @@ void* find_acpi_table(struct rsdp_descriptor *rsdp, const char *signature) {
         display_printstr("ACPI Error: RSDT address is zero!\n");
         return 0;
     }
-    display_printstr("ACPI: Found RSDT Table At:");
-    display_printhex(rsdp->rsdt_address);
+
+    uint64_t rsdt_phys = rsdp->rsdt_address;
+
+    display_printstr("ACPI: Found RSDT Table At: ");
+    display_printhex(rsdt_phys);
     display_printchar('\n');
-    if (rsdp->rsdt_address > 0xF0000000) {
-        display_printstr("ACPI Error: RSDT Table is out of Page Table range\n");
-        return 0;
-    }
-    // 1. Get the RSDT physical address from the RSDP
-    struct rsdt *rsdt = (struct rsdt *)(uintptr_t)rsdp->rsdt_address;
+
+    // 1. Map the first page (4096 bytes) of the RSDT so we can safely read its header
+    // Flags: 0x03 = Present | Read/Write
+    vmm_map_range(rsdt_phys, rsdt_phys, 4096, PAGE_PRESENT | PAGE_WRITE);
+
+    struct rsdt *rsdt = (struct rsdt *)(uintptr_t)rsdt_phys;
 
     if (memcmp(rsdt->header.signature, "RSDT", 4) != 0) {
         display_printstr("ACPI Error: RSDT signature mismatch!\n");
         return 0;
     }
 
-    // 2. Calculate how many table pointers are inside the RSDT
-    // Total table length minus the header size gives us the size of the array of pointers,
-    // and each pointer is 4 bytes (uint32_t).
-    int entries = (rsdt->header.length - sizeof(struct acpi_header)) / 4;
+    // 2. Now that we read the header, map the *entire* RSDT table based on its actual length
+    uint32_t rsdt_length = rsdt->header.length;
+    vmm_map_range(rsdt_phys, rsdt_phys, rsdt_length, PAGE_PRESENT | PAGE_WRITE);
 
-    // 3. Loop through every pointer to look for the table signature we want
+    // 3. Calculate how many table pointers are inside the RSDT
+    int entries = (rsdt_length - sizeof(struct acpi_header)) / 4;
+
+    // 4. Loop through every pointer to look for the target table signature
     for (int i = 0; i < entries; i++) {
-        struct acpi_header *table = (struct acpi_header *)(uintptr_t)rsdt->pointer_to_other_tables[i];
+        uint64_t table_phys = rsdt->pointer_to_other_tables[i];
+        if (table_phys == 0) continue;
 
-        // Check if this table's signature matches what we're looking for (e.g., "FACP")
-        if (table != 0 && memcmp(table->signature, signature, 4) == 0) {
+        // Map the header of this sub-table first to read its length
+        vmm_map_range(table_phys, table_phys, 4096, PAGE_PRESENT | PAGE_WRITE);
+        struct acpi_header *table = (struct acpi_header *)(uintptr_t)table_phys;
+
+        // Map the full sub-table based on its specific length
+        vmm_map_range(table_phys, table_phys, table->length, PAGE_PRESENT | PAGE_WRITE);
+
+        // Check if this table's signature matches what we want (e.g., "FACP")
+        if (memcmp(table->signature, signature, 4) == 0) {
             return table; // Found it!
         }
     }

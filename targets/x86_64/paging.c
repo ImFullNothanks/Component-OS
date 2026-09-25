@@ -2,6 +2,9 @@
 #include "pmm.h"
 #include "display.h"
 #include <stdint.h>
+#include <stddef.h>
+
+static uint64_t *kernel_pml4 = NULL;
 
 // section symbols from linker script
 extern uint8_t _text_start,   _text_end;
@@ -26,14 +29,14 @@ static uint64_t *get_or_create(uint64_t *table, int idx) {
     return (uint64_t *)(uintptr_t)(table[idx] & ~0xFFFULL);
 }
 
-static void map_page(uint64_t *pml4, uint64_t va, uint64_t pa, uint64_t flags) {
+void map_page(uint64_t *pml4, uint64_t va, uint64_t pa, uint64_t flags) {
     uint64_t *pdpt = get_or_create(pml4, PML4_IDX(va));
     uint64_t *pd   = get_or_create(pdpt, PDPT_IDX(va));
     uint64_t *pt   = get_or_create(pd,   PD_IDX(va));
     pt[PT_IDX(va)] = (pa & ~0xFFFULL) | flags;
 }
 
-static void map_range(uint64_t *pml4, uint64_t va_start, uint64_t va_end,
+void map_range(uint64_t *pml4, uint64_t va_start, uint64_t va_end,
                       uint64_t pa_start, uint64_t flags) {
     uint64_t va = PAGE_ALIGN_DOWN(va_start);
     uint64_t pa = PAGE_ALIGN_DOWN(pa_start);
@@ -47,6 +50,9 @@ static void map_range(uint64_t *pml4, uint64_t va_start, uint64_t va_end,
 
 void paging_remap(void) {
     uint64_t *new_pml4 = (uint64_t *)pmm_alloc();
+
+    // Assign it to our global tracker so other functions can find it
+    kernel_pml4 = new_pml4;
 
     uint64_t text_start   = (uint64_t)(uintptr_t)&_text_start;
     uint64_t text_end     = (uint64_t)(uintptr_t)&_text_end;
@@ -97,4 +103,11 @@ void paging_remap(void) {
     );
 
     display_printstr("4KB pages + protection active\n");
+}
+
+void vmm_map_page(uint64_t va, uint64_t pa, uint64_t flags) {
+    map_page(kernel_pml4, va, pa, flags);
+}
+void vmm_map_range(uint64_t va_start, uint64_t va_end, uint64_t pa_start, uint64_t flags) {
+    map_range(kernel_pml4, va_start, va_end, pa_start, flags);
 }

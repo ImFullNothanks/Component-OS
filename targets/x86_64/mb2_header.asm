@@ -29,6 +29,12 @@ header_start:
     dd 8                        ; Size of this tag (including type and flags)
 
     align 8
+    ; Request ACPI information tag from GRUB
+    dw 6                        ; Type: Multiboot header tag for Memory Map
+    dw 1                        ; Flags (can be non-optional or optional; 1 for optional)
+    dd 8
+
+    align 8
     ; End tag
     dw 0
     dw 0

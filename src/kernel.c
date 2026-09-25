@@ -5,8 +5,10 @@
 #include "idt.h"
 #include "pic.h"
 #include "smbios.h"
+#include "string.h"
 #include "krnlshell.h"
 #include "multiboot2.h"
+#include "mb2_mmap.h"
 #include "fb.h"
 #include "acpi.h"
 #include "pit.h"
@@ -29,9 +31,19 @@ void kernel_start() {
         display_set_vga();
     }
 
+    uint64_t total_ram_bytes = get_total_memory(mb2_info);
+    uint64_t total_ram_mb = total_ram_bytes / (1024 * 1024);
+
+    char total_ram_string[32];
+    itoa(total_ram_mb, total_ram_string, 10);
+
     display_clear();
     display_printstr("Component Kernel Started!\n");
     paging_remap(); // Page Tables Remapping
+
+    display_printstr("Total Usable RAM: ");
+    display_printstr(total_ram_string);
+    display_printstr(" MB\n");
 
     idt_init(); // Initalize descriptor tables and interrupts
     acpi_init(mb2_info);
