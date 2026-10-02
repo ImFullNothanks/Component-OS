@@ -1,6 +1,5 @@
-#include "kbd.h"
-#include "krnlshell.h"
-#include "print.h"
+#include <kernel/kbd.h>
+#include <kernel/krnlshell.h>
 
 void kbd_handler(uint8_t scancode) {
     if (scancode & 0x80) return;  // ignore key release

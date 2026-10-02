@@ -1,7 +1,7 @@
-#include "pit.h"
-#include "pic.h"
-#include "io.h"
-#include "display.h"
+#include <x86_64/pit.h>
+#include <x86_64/pic.h>
+#include <x86_64/io.h>
+#include <kernel/display.h>
 #include <stdint.h>
 
 uint32_t tick_count = 0;

@@ -1,9 +1,9 @@
-#include "pic.h"
-#include "io.h"
+#include <x86_64/pic.h>
+#include <x86_64/io.h>
 
 // small delay needed between PIC commands on real hardware
 void io_wait(void) {
-    outb(0x80, 0);  // write to unused port
+    inb(0x61);  // write to unused port
 }
 
 void pic_remap(void) {

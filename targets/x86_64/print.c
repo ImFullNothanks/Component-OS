@@ -1,4 +1,4 @@
-#include "print.h"
+#include <x86_64/print.h>
 
 struct Char {
     uint8_t character;

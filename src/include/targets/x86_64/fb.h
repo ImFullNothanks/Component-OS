@@ -1,6 +1,6 @@
 #pragma once
 #include <stdint.h>
-#include "multiboot2.h"
+#include <kernel/multiboot2.h>
 
 struct mb2_framebuffer_tag {
     struct mb2_tag tag;

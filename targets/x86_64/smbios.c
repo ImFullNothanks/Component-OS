@@ -1,6 +1,6 @@
-#include "smbios.h"
-#include "display.h"
-#include "string.h"
+#include <x86_64/smbios.h>
+#include <kernel/display.h>
+#include <kernel/string.h>
 
 static const char* smbios_get_string(struct SMBIOS_Header *hdr, uint64_t index) {
     if (index == 0) return "Not Specified";

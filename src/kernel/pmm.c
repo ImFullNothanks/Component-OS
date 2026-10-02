@@ -1,5 +1,5 @@
-#include "pmm.h"
-#include "display.h"
+#include <kernel/pmm.h>
+#include <kernel/display.h>
 
 static uint64_t pmm_next = 0;
 static uint64_t pmm_end  = 0;

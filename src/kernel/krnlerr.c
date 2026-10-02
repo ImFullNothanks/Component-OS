@@ -1,5 +1,5 @@
-#include "krnlerr.h"
-#include "display.h"
+#include <kernel/krnlerr.h>
+#include <kernel/display.h>
 
 void kernel_panic(const char *msg, struct cpu_state *state) {
     __asm__ volatile ("cli");
@@ -21,15 +21,15 @@ void kernel_panic(const char *msg, struct cpu_state *state) {
         display_printstr("CPU Registers:\n");
         display_set_color(white, blue);
 
-        display_printstr("RIP: ");
+        display_printstr("Instruction Pointer: ");
         display_printhex(state->rip);
-        display_printstr("  RSP: ");
+        display_printstr("  Stack Pointer: ");
         display_printhex(state->rsp);
         display_printstr("\n");
 
-        display_printstr("INT: ");
+        display_printstr("Interrupt Number: ");
         display_printhex(state->irq_no);
-        display_printstr("  ERR: ");
+        display_printstr("  Error code: ");
         display_printhex(state->err_code);
         display_printstr("\n");
     }

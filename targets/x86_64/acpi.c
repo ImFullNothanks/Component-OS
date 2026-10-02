@@ -1,9 +1,9 @@
-#include "acpi.h"
-#include "string.h"
-#include "io.h"
-#include "paging.h"
-#include "display.h"
-#include "multiboot2.h"
+#include <x86_64/acpi.h>
+#include <kernel/string.h>
+#include <x86_64/io.h>
+#include <x86_64/paging.h>
+#include <kernel/display.h>
+#include <kernel/multiboot2.h>
 #include <stdint.h>
 
 uint16_t pm1a_cnt_port;

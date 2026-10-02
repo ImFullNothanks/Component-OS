@@ -1,9 +1,10 @@
 #pragma once
 #include <stdint.h>
-#include "string.h"
-#include "io.h"
-#include "display.h"
-#include "multiboot2.h"
+#include <kernel/string.h>
+#include <x86_64/paging.h>
+#include <x86_64/io.h>
+#include <kernel/display.h>
+#include <kernel/multiboot2.h>
 
 struct __attribute__((packed)) rsdp_descriptor {
     char signature[8];       // "RSD PTR "

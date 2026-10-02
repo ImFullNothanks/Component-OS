@@ -1,7 +1,7 @@
-#include "powerstate.h"
-#include "io.h"
-#include "display.h"
-#include "acpi.h"
+#include <kernel/powerstate.h>
+#include <x86_64/io.h>
+#include <kernel/display.h>
+#include <x86_64/acpi.h>
 
 void system_reboot(void) {
     uint8_t temp = 0x02;

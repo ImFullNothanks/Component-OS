@@ -1,8 +1,8 @@
 #pragma once
 #include <stdint.h>
-#include "pic.h"
-#include "io.h"
-#include "display.h"
+#include <x86_64/pic.h>
+#include <x86_64/io.h>
+#include <kernel/display.h>
 
 void pit_init(uint32_t frequency);
 void pit_handler(void);

@@ -1,6 +1,6 @@
-#include "paging.h"
-#include "pmm.h"
-#include "display.h"
+#include <x86_64/paging.h>
+#include <kernel/pmm.h>
+#include <kernel/display.h>
 #include <stdint.h>
 #include <stddef.h>
 

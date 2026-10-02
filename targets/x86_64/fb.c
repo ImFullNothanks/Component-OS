@@ -1,5 +1,5 @@
-#include "fb.h"
-#include "multiboot2.h"
+#include <x86_64/fb.h>
+#include <kernel/multiboot2.h>
 
 static const uint8_t font[128][8] = {
     [' ']  = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00},

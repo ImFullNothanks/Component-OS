@@ -1,6 +1,6 @@
 #include <stdint.h>
-#include "multiboot2.h"
-#include "display.h"
+#include <kernel/multiboot2.h>
+#include <kernel/display.h>
 
 // Walks the tag list starting from a given tag pointer until it matches the requested type
 struct mb2_tag* mb2_get_tag(uint32_t info_addr, uint32_t type) {

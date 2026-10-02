@@ -1,6 +1,6 @@
-#include "display.h"
-#include "print.h"
-#include "fb.h"
+#include <kernel/display.h>
+#include <x86_64/print.h>
+#include <x86_64/fb.h>
 
 static display_backend_t backend;
 

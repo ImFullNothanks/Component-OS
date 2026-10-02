@@ -1,5 +1,5 @@
-#include "multiboot2.h"
-#include "mb2_mmap.h"
+#include <kernel/multiboot2.h>
+#include <x86_64/mb2_mmap.h>
 
 struct mb2_mmap_entry {
     uint64_t addr;

@@ -1,17 +1,17 @@
-#include "display.h"
-#include "pmm.h"
-#include "paging.h"
-#include "pci.h"
-#include "idt.h"
-#include "pic.h"
-#include "smbios.h"
-#include "string.h"
-#include "krnlshell.h"
-#include "multiboot2.h"
-#include "mb2_mmap.h"
-#include "fb.h"
-#include "acpi.h"
-#include "pit.h"
+#include <kernel/display.h>
+#include <kernel/pmm.h>
+#include <x86_64/paging.h>
+#include <x86_64/pci.h>
+#include <x86_64/idt.h>
+#include <x86_64/pic.h>
+#include <x86_64/smbios.h>
+#include <kernel/string.h>
+#include <kernel/krnlshell.h>
+#include <kernel/multiboot2.h>
+#include <x86_64/mb2_mmap.h>
+#include <x86_64/fb.h>
+#include <x86_64/acpi.h>
+#include <x86_64/pit.h>
 
 extern uint32_t mb2_info;
 extern uint64_t _kernel_end;

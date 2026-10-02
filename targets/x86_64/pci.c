@@ -1,6 +1,6 @@
-#include "pci.h"
-#include "io.h"
-#include "display.h"
+#include <x86_64/pci.h>
+#include <x86_64/io.h>
+#include <kernel/display.h>
 
 uint32_t pci_read(uint8_t bus, uint8_t dev, uint8_t func, uint8_t offset) {
     uint32_t addr = (1 << 31)           // enable bit

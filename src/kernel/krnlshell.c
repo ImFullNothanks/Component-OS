@@ -1,10 +1,10 @@
-#include "krnlshell.h"
-#include "display.h"
-#include "pci.h"
-#include "pit.h"
-#include "smbios.h"
-#include "powerstate.h"
-#include "string.h"  // we'll need this too
+#include <kernel/krnlshell.h>
+#include <kernel/display.h>
+#include <x86_64/pci.h>
+#include <x86_64/pit.h>
+#include <x86_64/smbios.h>
+#include <kernel/powerstate.h>
+#include <kernel/string.h>  // we'll need this too
 
 #define CMD_BUF_SIZE 256
 

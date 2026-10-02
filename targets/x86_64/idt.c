@@ -1,10 +1,10 @@
-#include "idt.h"
-#include "io.h"
-#include "display.h"
-#include "pic.h"
-#include "krnlerr.h"
-#include "kbd.h"
-#include "pit.h"
+#include <x86_64/idt.h>
+#include <x86_64/io.h>
+#include <kernel/display.h>
+#include <x86_64/pic.h>
+#include <kernel/krnlerr.h>
+#include <kernel/kbd.h>
+#include <x86_64/pit.h>
 
 #define IDT_ENTRIES 256
 #define IDT_TYPE_INTERRUPT 0x8E // Present bit + ring0 + interrupt gate
