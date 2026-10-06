@@ -1,7 +1,15 @@
 ENTRY(start)
+KERNEL_PHYS_START = 1M
+
+PHDRS {
+    boot    PT_LOAD FLAGS(5);   /* RX */
+    text    PT_LOAD FLAGS(5);   /* RX */
+    rodata  PT_LOAD FLAGS(4);   /* R  */
+    data    PT_LOAD FLAGS(6);   /* RW */
+}
 
 SECTIONS {
-    . = 1M;
+    . = KERNEL_PHYS_START;
 
     .boot : { KEEP(*(.multiboot_header)) }
 
