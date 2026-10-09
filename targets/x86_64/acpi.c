@@ -39,7 +39,7 @@ void* find_acpi_table(struct rsdp_descriptor *rsdp, const char *signature) {
 
     // 1. Map the first page (4096 bytes) of the RSDT so we can safely read its header
     // Flags: 0x03 = Present | Read/Write
-    vmm_map_range(rsdt_phys, rsdt_phys, 4096, PAGE_PRESENT | PAGE_WRITE);
+    vmm_map_range(rsdt_phys, (uint64_t)(rsdt_phys + 4096), rsdt_phys, PAGE_PRESENT | PAGE_WRITE);
 
     struct rsdt *rsdt = (struct rsdt *)(uintptr_t)rsdt_phys;
 
@@ -50,7 +50,7 @@ void* find_acpi_table(struct rsdp_descriptor *rsdp, const char *signature) {
 
     // 2. Now that we read the header, map the *entire* RSDT table based on its actual length
     uint32_t rsdt_length = rsdt->header.length;
-    vmm_map_range(rsdt_phys, rsdt_phys, rsdt_length, PAGE_PRESENT | PAGE_WRITE);
+    vmm_map_range(rsdt_phys, (rsdt_phys + rsdt_length), rsdt_phys, PAGE_PRESENT | PAGE_WRITE);
 
     // 3. Calculate how many table pointers are inside the RSDT
     int entries = (rsdt_length - sizeof(struct acpi_header)) / 4;
@@ -61,11 +61,11 @@ void* find_acpi_table(struct rsdp_descriptor *rsdp, const char *signature) {
         if (table_phys == 0) continue;
 
         // Map the header of this sub-table first to read its length
-        vmm_map_range(table_phys, table_phys, 4096, PAGE_PRESENT | PAGE_WRITE);
+        vmm_map_range(table_phys, (table_phys + 4096), table_phys, PAGE_PRESENT | PAGE_WRITE);
         struct acpi_header *table = (struct acpi_header *)(uintptr_t)table_phys;
 
         // Map the full sub-table based on its specific length
-        vmm_map_range(table_phys, table_phys, table->length, PAGE_PRESENT | PAGE_WRITE);
+        vmm_map_range(table_phys, (table_phys + table->length), table_phys, PAGE_PRESENT | PAGE_WRITE);
 
         // Check if this table's signature matches what we want (e.g., "FACP")
         if (memcmp(table->signature, signature, 4) == 0) {
